@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>موقع أدهم الصحي — بحث غذائي مفتوح</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="app">
+    <!-- Auth -->
+    <section id="auth" class="card">
+      <h1>أدهم — الموقع الصحي</h1>
+      <p class="muted">سجل أو سجّل الدخول لحفظ بياناتك (محليًا)</p>
+
+      <label>اسم المستخدم</label>
+      <input id="auth-username" type="text" placeholder="مثال: ahmed" autocomplete="username" />
+
+      <label>كلمة المرور</label>
+      <div class="pw-row">
+        <input id="auth-password" type="password" placeholder="كلمة المرور" autocomplete="current-password" />
+        <button id="togglePw" class="icon-btn" title="إظهار/إخفاء">👁️</button>
+      </div>
+
+      <div class="row">
+        <button id="btnLogin">تسجيل دخول</button>
+        <button id="btnRegister">إنشاء حساب</button>
+      </div>
+
+      <p class="muted small">ملاحظة: كلمات المرور تُخزّن كـ SHA-256 (ليس نصًا واضحًا) في المتصفح.</p>
+    </section>
+
+    <!-- Main -->
+    <section id="main" class="hidden">
+      <header class="top">
+        <div>
+          <h2 id="welcome">مرحبًا</h2>
+          <p id="sub" class="muted">محرك بحث غذائي مفتوح — يدعم العربية والإنجليزية</p>
+        </div>
+        <div class="top-actions">
+          <button id="btnAccount" class="ghost">حسابي</button>
+          <button id="btnLogout" class="danger">تسجيل خروج</button>
+        </div>
+      </header>
+
+      <div class="grid">
+        <!-- BMI -->
+        <article class="card">
+          <h3>حاسبة مؤشر كتلة الجسم (BMI)</h3>
+          <label>الطول (م)</label>
+          <input id="height" type="number" step="0.01" placeholder="مثال: 1.75" />
+          <label>الوزن (كجم)</label>
+          <input id="weight" type="number" step="0.1" placeholder="مثال: 72" />
+          <div class="row">
+            <button id="btnCalcBMI">احسب</button>
+            <button id="btnResetBMI" class="muted">تفريغ</button>
+          </div>
+          <div id="bmiResult" class="result small muted"></div>
+        </article>
+
+        <!-- Food search -->
+        <article class="card">
+          <h3>🔎 محرك البحث الغذائي (OpenFoodFacts)</h3>
+          <p class="muted small">اكتب اسمًا بالعربية أو الإنجليزية — مثال: تفاح، apple، بيض، egg</p>
+
+          <div class="search-box">
+            <input id="foodInput" type="search" placeholder="اكتب اسم الطعام..." autocomplete="off" />
+            <button id="btnSearch" title="بحث">بحث</button>
+          </div>
+
+          <div id="suggestions" class="suggestions hidden"></div>
+
+          <div id="foodResult" class="food-result"></div>
+        </article>
+      </div>
+
+      <footer class="muted small">
+        يستخدم OpenFoodFacts كمصدر رئيسي (بدون مفتاح). إذا لم توجد نتيجة، يستخدم بيانات محلية احتياطية.
+      </footer>
+    </section>
+
+    <!-- Account modal -->
+    <div id="accountModal" class="modal hidden">
+      <div class="modal-card">
+        <h4>معلومات الحساب</h4>
+        <p><strong>المستخدم:</strong> <span id="accName"></span></p>
+        <p><strong>تاريخ الإنشاء:</strong> <span id="accCreated"></span></p>
+        <div class="row">
+          <button id="closeAcc" class="muted">إغلاق</button>
+          <button id="deleteAcc" class="danger">حذف الحساب</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

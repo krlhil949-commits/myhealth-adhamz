@@ -1,0 +1,235 @@
+:root {
+  --bg: #f7fbf7;
+  --card: #ffffff;
+  --accent: #0e7a5f;
+  --muted: #6b6b6b;
+  --danger: #d9534f;
+  --shadow: 0 6px 20px rgba(14, 122, 95, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: "Tajawal", "Segoe UI", Arial, sans-serif;
+  background: linear-gradient(180deg, #ecf9f2 0%, var(--bg) 100%);
+  color: #163a2b;
+  -webkit-font-smoothing: antialiased;
+  direction: rtl;
+}
+
+.app {
+  max-width: 980px;
+  margin: 30px auto;
+  padding: 18px;
+}
+
+/* ----- البطاقات ----- */
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+  margin-bottom: 16px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.small {
+  font-size: 13px;
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e6eee6;
+  font-size: 15px;
+  outline: none;
+  transition: 0.2s border-color;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button.ghost {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(14, 122, 95, 0.12);
+}
+
+button.muted {
+  background: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+button.danger {
+  background: var(--danger);
+  color: white;
+}
+
+.icon-btn {
+  background: transparent;
+  padding: 6px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* ----- التخطيط ----- */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.top-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.search-box {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-box input {
+  flex: 1;
+}
+
+/* ----- الاقتراحات ----- */
+.suggestions {
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px;
+  margin-top: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  max-height: 250px;
+  overflow-y: auto;
+  z-index: 5;
+  position: relative;
+}
+
+.suggestions div {
+  padding: 8px;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  text-align: right;
+}
+
+.suggestions div:last-child {
+  border-bottom: none;
+}
+
+.suggestions div:hover {
+  background: #f1f8f3;
+}
+
+/* ----- النتائج ----- */
+.food-result {
+  margin-top: 12px;
+}
+
+.result {
+  background: #f7fffb;
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(14, 122, 95, 0.06);
+}
+
+/* ----- نافذة الحساب (الإصلاح المهم) ----- */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000; /* 🔥 هذا يحل مشكلة الظهور أسفل العناصر */
+  transition: opacity 0.3s ease;
+}
+
+.modal.hidden {
+  display: none !important; /* تأكد من الاختفاء الكامل */
+}
+
+.modal-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 14px;
+  min-width: 280px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: popup 0.3s ease;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-card h4 {
+  margin-top: 0;
+  color: var(--accent);
+}
+
+/* زر الحذف */
+.modal-card .danger {
+  background: var(--danger);
+  border: none;
+}
+
+.modal-card .danger:hover {
+  background: #b94440;
+}
+
