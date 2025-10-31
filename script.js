@@ -126,7 +126,141 @@ btnCalcBMI.addEventListener('click', () => {
   else if (bmi <= 25) text += `وزنك مناسب ✅`;
   else text += `زيادة وزن. تحتاج خسارة ${diff} كجم (الوزن المثالي ≈ ${ideal.toFixed(1)} كجم).`;
   bmiResult.innerText = text;
+});// --- استبدال مستمع btnCalcBMI القديم بهذا المستمع الجديد ---
+btnCalcBMI.removeEventListener?.('click', null); // محاولة نظيفة لإزالة أي مستمعات سابقة (آمنة)
+btnCalcBMI.addEventListener('click', async () => {
+  const h = parseFloat(heightEl.value);
+  const w = parseFloat(weightEl.value);
+  const age = parseInt(document.getElementById('age')?.value || '0', 10);
+  const sex = document.getElementById('sex')?.value || 'male';
+  const pal = parseFloat(document.getElementById('activity')?.value || '1.55');
+
+  if (!h || !w || !age || age <= 0) return alert('أدخل الطول، الوزن، والعمر بشكل صحيح.');
+
+  // حساب BMI
+  const bmi = w / (h * h);
+  // الوزن المثالي التقريبي على أساس BMI = 22
+  const idealWeight = 22 * h * h;
+  const diff = (w - idealWeight);
+
+  // ====== حساب BMR (Mifflin-St Jeor) ======
+  // Mifflin-St Jeor: BMR = 10*w(kg) + 6.25*h(cm) - 5*age + s  (s = +5 للذكور، -161 للإناث)
+  const hCm = h * 100;
+  const s = (sex === 'male') ? 5 : -161;
+  const bmr = 10 * w + 6.25 * hCm - 5 * age + s; // kcal/day (تقريب)
+  // TDEE = BMR * PAL (Physical Activity Level)
+  const tdee = bmr * pal;
+
+  // ====== توصيات زيادة/نقصان السعرات ======
+  // قواعد عملية: عجز ~500 kcal/day => خسارة ~0.5 kg/week ، فائض ~300-500 => زيادة صحية
+  let calRecommendation = '';
+  let targetCalories = tdee;
+  if (bmi < 18.5) {
+    // نقص وزن => توصية بزيادة 300-500 kcal
+    const add = 400;
+    targetCalories = Math.round(tdee + add);
+    calRecommendation = `نظراً لأن BMI = ${bmi.toFixed(1)} (نقص وزن)، نوصي بزيادة حوالي ${add} kcal/يوم فوق احتياجك (≈ ${targetCalories} kcal/يوم) لتحقيق زيادة وزن تدريجية وصحية.`;
+  } else if (bmi >= 25) {
+    // زيادة وزن => عجز 500 kcal
+    const deficit = 500;
+    targetCalories = Math.max(1200, Math.round(tdee - deficit)); // لا ننصح بمستويات خطيرة أقل من 1200
+    calRecommendation = `نظراً لأن BMI = ${bmi.toFixed(1)} (وزن زائد)، نوصي بعجز تقريبي حوالي ${deficit} kcal/يوم (≈ ${targetCalories} kcal/يوم) لتحقيق خسارة مستدامة ~0.5 كجم/أسبوع.`;
+  } else {
+    calRecommendation = `BMI = ${bmi.toFixed(1)} — وزن ضمن النطاق الصحي. للحفاظ على وزنك راقب استهلاك ~${Math.round(tdee)} kcal/يوم.`;
+  }
+
+  // ====== توصية سكر (WHO) ======
+  // WHO: أقل من 10% من مجمل الطاقة من السكّر الحر، والأفضل <5%
+  const sugarLimit10g = ((tdee * 0.10) / 4).toFixed(1); // غرام سكر = (kcal_from_sugar)/4
+  const sugarLimit5g  = ((tdee * 0.05) / 4).toFixed(1);
+  const sugarMsg = `توصيات WHO: السكّر الحر ≤10% من الطاقة (≈ ${sugarLimit10g} g/يوم)، والأفضل <5% (≈ ${sugarLimit5g} g/يوم).`;
+
+  // ====== أمثلة أطعمة يومية (تقريبية بالاعتماد على LOCAL_FOODS) ======
+  // نعطي أمثلة بسيطة لتغطية فرق السعرات (إن نقص أو زيادة مطلوبة)
+  const local = LOCAL_FOODS;
+  // نعرض 3 اقتراحات: خفيفة، متوسطة، عالية — نستخدم قيم kcal من local (تم افتراض أنها لكل 100g)
+  function sampleFoodPlans(deltaCalories) {
+    // deltaCalories: رقم موجبي = نحتاج إضافة / سالبي = نحتاج نقص
+    const plans = [];
+    // نسهل: نستخدم التفاح (52 kcal/100g) وبيض (155 kcal/100g) وأرز (130 kcal/100g) وموز (89)
+    const apple = local.find(x=>x.name_en==='apple') || local[0];
+    const egg   = local.find(x=>x.name_en==='egg') || local[2];
+    const rice  = local.find(x=>x.name_en==='cooked white rice') || local[4];
+    const banana= local.find(x=>x.name_en==='banana') || local[1];
+    // تحويل kcal/100g إلى جرام مطلوب لتغطية delta
+    const items = [
+      {name: apple.name_ar, kcalPer100: apple.calories},
+      {name: egg.name_ar,   kcalPer100: egg.calories},
+      {name: rice.name_ar,  kcalPer100: rice.calories},
+      {name: banana.name_ar,kcalPer100: banana.calories}
+    ];
+    for (const it of items) {
+      if (!it.kcalPer100 || it.kcalPer100 <= 0) continue;
+      const grams = Math.round((Math.abs(deltaCalories) / it.kcalPer100) * 100);
+      plans.push({food: it.name, grams, approxKcal: Math.round(it.kcalPer100 * grams / 100)});
+    }
+    return plans.slice(0,3);
+  }
+
+  const delta = Math.round(targetCalories - tdee);
+  const foodPlan = (Math.abs(delta) > 50) ? sampleFoodPlans(delta) : [];
+
+  // ====== جدول حرق السعرات حسب الأنشطة (معادلة MET) ======
+  // حرق بالـ kcal/min = MET * 3.5 * weight_kg / 200
+  const activities = [
+    {name: 'مشي سريع (5 كم/س)', met: 3.8},
+    {name: 'جري خفيف', met: 7.0},
+    {name: 'ركوب دراجة معتدل', met: 6.8},
+    {name: 'سباحة متوسطة', met: 6.0},
+    {name: 'تمارين مقاومة (رفع أثقال)', met: 5.0}
+  ];
+  function calcBurn(met, minutes) {
+    return (met * 3.5 * w / 200) * minutes;
+  }
+  const burnRows = activities.map(a => {
+    const burn30 = Math.round(calcBurn(a.met, 30));
+    const burn60 = Math.round(calcBurn(a.met, 60));
+    return {activity: a.name, burn30, burn60};
+  });
+
+  // ====== بناء المحتوى لعرضه في واجهة المستخدم ======
+  let html = `<div class="result">
+    <h4 style="margin:0 0 6px 0">نتيجة BMI & احتياجات الطاقة</h4>
+    <div class="muted small">BMI = ${bmi.toFixed(1)} — الوزن المثالي التقريبي ≈ ${idealWeight.toFixed(1)} كجم</div>
+    <div style="margin-top:8px"><strong>BMR (راحة)</strong>: ${Math.round(bmr)} kcal/يوم — <strong>TDEE</strong>: ${Math.round(tdee)} kcal/يوم (مستوى نشاط PAL=${pal})</div>
+    <div style="margin-top:8px">${escapeHtml(calRecommendation)}</div>
+    <div style="margin-top:8px;color:var(--muted)">${escapeHtml(sugarMsg)}</div>`;
+
+  if (foodPlan.length) {
+    html += `<div style="margin-top:10px"><strong>خطة غذائية مقترحة لتعديل السعرات (${delta>=0? 'زيادة':'نقص'} ${Math.abs(delta)} kcal):</strong><ul>`;
+    foodPlan.forEach(p => {
+      html += `<li>${escapeHtml(p.food)} — ≈ ${p.grams} g (≈ ${p.approxKcal} kcal)</li>`;
+    });
+    html += `</ul></div>`;
+  }
+
+  // جدول الحرق
+  html += `<div style="margin-top:12px"><strong>جدول تقديري لحرق السعرات (تعتمد القيم على وزنك الحالي ${w} كجم):</strong>
+    <table style="width:100%;border-collapse:collapse;margin-top:8px">
+      <thead><tr><th style="text-align:right;padding:6px">النشاط</th><th style="text-align:right;padding:6px">30 دقيقة (kcal)</th><th style="text-align:right;padding:6px">60 دقيقة (kcal)</th></tr></thead>
+      <tbody>`;
+  burnRows.forEach(r=>{
+    html += `<tr><td style="text-align:right;padding:6px;border-top:1px solid #f0f0f0">${escapeHtml(r.activity)}</td>
+             <td style="text-align:right;padding:6px;border-top:1px solid #f0f0f0">${r.burn30}</td>
+             <td style="text-align:right;padding:6px;border-top:1px solid #f0f0f0">${r.burn60}</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  // إضافة المرجع/تنبيه
+  html += `<div class="muted small" style="margin-top:10px">
+    المصدر: الحسابات تقريبية ومبنية على معادلات علمية شائعة (Mifflin-St Jeor لحساب BMR، ومعاملات PAL وMET لاحتساب الإنفاق الطاقي). التوصيات الغذائية العامة مستندة إلى إرشادات منظمة الصحة العالمية (WHO) وFAO. هذه البيانات تعليمية وليست تشخيصاً — راجع اختصاصي تغذية/طبيب للخطط الشخصية.
+  </div>`;
+
+  html += `</div>`; // إغلاق .result
+
+  foodResult.innerHTML = html;
 });
+
 btnResetBMI.addEventListener('click', () => {
   heightEl.value = '';
   weightEl.value = '';
@@ -363,3 +497,4 @@ document.addEventListener('click', (e) => {
     suggestions.classList.add('hidden');
   }
 });
+
