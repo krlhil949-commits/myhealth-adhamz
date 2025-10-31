@@ -100,6 +100,18 @@ document.getElementById("btnCalcBMI").addEventListener("click", () => {
       ? "قلل الأطعمة الدهنية والسكريات، وركز على الخضروات والبروتينات الخفيفة"
       : "ابدأ خطة غذائية منخفضة السعرات بإشراف مختص، مع نشاط بدني يومي";
 
+  // 🔹 حساب الوزن المثالي والفارق
+  const minIdeal = 18.5 * h * h;
+  const maxIdeal = 24.9 * h * h;
+  const avgIdeal = ((minIdeal + maxIdeal) / 2).toFixed(1);
+  const diff = (w - avgIdeal).toFixed(1);
+  const diffText =
+    diff > 0
+      ? `🔻 تحتاج لخسارة حوالي ${diff} كجم للوصول إلى الوزن المثالي.`
+      : diff < 0
+      ? `🔺 تحتاج لزيادة حوالي ${Math.abs(diff)} كجم للوصول إلى الوزن المثالي.`
+      : `✅ وزنك مثالي تمامًا.`;
+
   // 🔹 جدول النشاط (WHO معتمد)
   const table = `
   <table border="1" style="width:100%;margin-top:10px;border-collapse:collapse">
@@ -113,6 +125,8 @@ document.getElementById("btnCalcBMI").addEventListener("click", () => {
   resultDiv.innerHTML = `
   🔹 <strong>مؤشر كتلة الجسم (BMI):</strong> ${bmi}<br>
   🔹 <strong>الحالة:</strong> ${status}<br>
+  🔹 <strong>الوزن المثالي:</strong> من ${minIdeal.toFixed(1)} إلى ${maxIdeal.toFixed(1)} كجم (المتوسط ${avgIdeal} كجم)<br>
+  ${diffText}<br>
   🔹 <strong>السعرات اليومية الموصى بها:</strong> ${calories} سعرة حرارية<br>
   🔹 <strong>الحد الأقصى للسكر:</strong> ${sugar} جرام/يوم<br>
   🔹 <strong>نصيحة غذائية:</strong> ${foodAdvice}<br><br>
@@ -125,4 +139,61 @@ document.getElementById("btnResetBMI").addEventListener("click", () => {
   document.getElementById("height").value = "";
   document.getElementById("weight").value = "";
   document.getElementById("bmiResult").innerHTML = "";
+});
+
+// 🍎 محرك البحث الغذائي الذكي
+document.getElementById("btnSearchFood").addEventListener("click", async () => {
+  const query = document.getElementById("foodInput").value.trim();
+  const foodResult = document.getElementById("foodResult");
+  if (!query) return (foodResult.innerHTML = "⚠️ الرجاء كتابة اسم الطعام للبحث عنه.");
+
+  foodResult.innerHTML = "⏳ جاري البحث عن المعلومات الغذائية...";
+
+  try {
+    // البحث عبر واجهة OpenFoodFacts
+    const res = await fetch(
+      `https://world.openfoodfacts.org/api/v2/search?fields=product_name,nutriments&limit=1&search_terms=${encodeURIComponent(
+        query
+      )}`
+    );
+    const data = await res.json();
+
+    if (!data.products || data.products.length === 0)
+      throw new Error("لا توجد نتائج لهذا العنصر.");
+
+    const p = data.products[0];
+    const n = p.nutriments || {};
+
+    foodResult.innerHTML = `
+      ✅ <strong>${p.product_name || query}</strong><br>
+      🔹 <strong>السعرات:</strong> ${n["energy-kcal_100g"] || "غير متوفر"} /100g<br>
+      🔹 <strong>البروتين:</strong> ${n.proteins_100g || "غير متوفر"} جم<br>
+      🔹 <strong>الدهون:</strong> ${n.fat_100g || "غير متوفر"} جم<br>
+      🔹 <strong>الكربوهيدرات:</strong> ${n.carbohydrates_100g || "غير متوفر"} جم<br>
+      🔹 <strong>الألياف:</strong> ${n.fiber_100g || "غير متوفر"} جم<br>
+      🔹 <strong>السكر:</strong> ${n.sugars_100g || "غير متوفر"} جم<br>
+      🔹 <strong>الملح:</strong> ${n.salt_100g || "غير متوفر"} جم
+    `;
+  } catch (e) {
+    // fallback للبيانات المحلية
+    const localFoods = {
+      "بيض": { calories: 155, protein: 13, fat: 11, carbs: 1.1, fiber: 0, sugar: 1.1 },
+      "تفاح": { calories: 52, protein: 0.3, fat: 0.2, carbs: 14, fiber: 2.4, sugar: 10 },
+      "لبن": { calories: 42, protein: 3.4, fat: 1, carbs: 5, fiber: 0, sugar: 5 },
+    };
+    const item = localFoods[query];
+    if (item) {
+      foodResult.innerHTML = `
+        ✅ <strong>${query}</strong><br>
+        🔹 <strong>السعرات:</strong> ${item.calories} /100g<br>
+        🔹 <strong>البروتين:</strong> ${item.protein} جم<br>
+        🔹 <strong>الدهون:</strong> ${item.fat} جم<br>
+        🔹 <strong>الكربوهيدرات:</strong> ${item.carbs} جم<br>
+        🔹 <strong>الألياف:</strong> ${item.fiber} جم<br>
+        🔹 <strong>السكر:</strong> ${item.sugar} جم
+      `;
+    } else {
+      foodResult.innerHTML = "❌ لم يتم العثور على نتائج، حاول كتابة الاسم بالعربية أو الإنجليزية.";
+    }
+  }
 });
