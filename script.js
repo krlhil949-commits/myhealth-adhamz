@@ -114,18 +114,7 @@ function showMain() {
 if (getCurrent()) showMain();
 
 /* ---------------- BMI ---------------- */
-btnCalcBMI.addEventListener('click', () => {
-  const h = parseFloat(heightEl.value);
-  const w = parseFloat(weightEl.value);
-  if (!h || !w) return alert('أدخل الطول والوزن بشكل صحيح.');
-  const bmi = w / (h * h);
-  const ideal = 22 * h * h;
-  const diff = (w - ideal).toFixed(1);
-  let text = `BMI = ${bmi.toFixed(1)} — `;
-  if (bmi < 18.5) text += `نقص وزن. تحتاج زيادة ${(diff * -1).toFixed(1)} كجم (الوزن المثالي ≈ ${ideal.toFixed(1)} كجم).`;
-  else if (bmi <= 25) text += `وزنك مناسب ✅`;
-  else text += `زيادة وزن. تحتاج خسارة ${diff} كجم (الوزن المثالي ≈ ${ideal.toFixed(1)} كجم).`;
-  bmiResult.innerText = text;
+
 });// --- استبدال مستمع btnCalcBMI القديم بهذا المستمع الجديد ---
 btnCalcBMI.removeEventListener?.('click', null); // محاولة نظيفة لإزالة أي مستمعات سابقة (آمنة)
 btnCalcBMI.addEventListener('click', async () => {
@@ -497,4 +486,5 @@ document.addEventListener('click', (e) => {
     suggestions.classList.add('hidden');
   }
 });
+
 
