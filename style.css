@@ -44,7 +44,7 @@ nav button:hover {
   border-radius: 16px;
   margin: 20px auto;
   width: 90%;
-  max-width: 500px;
+  max-width: 600px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
 }
 
@@ -90,6 +90,27 @@ button:hover {
   margin-top: 10px;
 }
 
+/* تصميم نتائج البحث */
+.food-item {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 10px;
+  margin: 10px auto;
+  text-align: right;
+}
+
+.food-item img {
+  width: 80px;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.food-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #ffda79;
+}
+
 /* الفوتر */
 .footer {
   background-color: #0e2a47;
@@ -97,7 +118,7 @@ button:hover {
   font-size: 0.9em;
 }
 
-/* التصميم المتجاوب */
+/* متجاوب */
 @media (max-width: 600px) {
   .section {
     width: 95%;
