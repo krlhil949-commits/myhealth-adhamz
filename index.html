@@ -1,108 +1,63 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta name="description" content="موقع أدهم للصحة يساعدك في معرفة الوزن المثالي، ونصائح لخسارة الوزن أو زيادته بطريقة صحية.">
-<meta name="keywords" content="ازاي اخس, ازاي اطخن, موقع ادهم للصحة, نصائح صحية, الوزن المثالي, تغذية صحية, رجيم صحي, زيادة الوزن, خسارة الوزن">
-<meta name="author" content="Adhamz">
-   <title>موقع ادهم للصحة - ازاي اخس و ازاي اطخن بسهولة</title>
-<meta name="description" content="موقع ادهم للصحة يقدم نصائح فعالة عن انقاص الوزن وزيادته بطريقة صحية وسهلة.">
-<meta name="keywords" content="موقع ادهم للصحة, ازاي اخس, ازاي اطخن, الصحة, الرجيم, اللياقة, النظام الغذائي, نصائح صحية">
-<meta name="author" content="Adhamz">
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>موقع أدهم الصحي — بحث غذائي مفتوح</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>موقع أدهم الصحي</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <main class="app">
-    <!-- Auth -->
-    <section id="auth" class="card">
-      <h1>أدهم — الموقع الصحي</h1>
-      <p class="muted">سجل أو سجّل الدخول لحفظ بياناتك (محليًا)</p>
+  <header class="header">
+    <h1>مرحباً بك في موقع أدهم الصحي</h1>
+    <nav>
+      <button onclick="showSection('bmi')">احسب معدل الوزن</button>
+      <button onclick="showSection('foodSearch')">محرك البحث الغذائي</button>
+      <button onclick="showSection('login')">تسجيل الدخول</button>
+    </nav>
+  </header>
 
-      <label>اسم المستخدم</label>
-      <input id="auth-username" type="text" placeholder="مثال: ahmed" autocomplete="username" />
-
-      <label>كلمة المرور</label>
-      <div class="pw-row">
-        <input id="auth-password" type="password" placeholder="كلمة المرور" autocomplete="current-password" />
-        <button id="togglePw" class="icon-btn" title="إظهار/إخفاء">👁️</button>
-      </div>
-
-      <div class="row">
-        <button id="btnLogin">تسجيل دخول</button>
-        <button id="btnRegister">إنشاء حساب</button>
-      </div>
-
-      <p class="muted small">ملاحظة: كلمات المرور تُخزّن كـ SHA-256 (ليس نصًا واضحًا) في المتصفح.</p>
+  <main>
+    <!-- تسجيل الدخول -->
+    <section id="login" class="section hidden">
+      <h2>تسجيل الدخول</h2>
+      <input type="text" id="username" placeholder="اسم المستخدم">
+      <input type="password" id="password" placeholder="كلمة المرور">
+      <button onclick="login()">تسجيل الدخول</button>
+      <p>ليس لديك حساب؟ <button onclick="register()">إنشاء حساب</button></p>
     </section>
 
-    <!-- Main -->
-    <section id="main" class="hidden">
-      <header class="top">
-        <div>
-          <h2 id="welcome">مرحبًا</h2>
-          <p id="sub" class="muted">محرك بحث غذائي مفتوح — يدعم العربية والإنجليزية</p>
-        </div>
-        <div class="top-actions">
-          <button id="btnAccount" class="ghost">حسابي</button>
-          <button id="btnLogout" class="danger">تسجيل خروج</button>
-        </div>
-      </header>
+    <!-- حاسبة BMI -->
+    <section id="bmi" class="section hidden">
+      <h2>احسب معدل وزنك</h2>
+      <label>الوزن الحالي (كجم):</label>
+      <input type="number" id="weight" placeholder="مثال: 70">
+      <label>الطول (بالمتر):</label>
+      <input type="number" id="height" placeholder="مثال: 1.75" step="0.01">
+      <button onclick="calculateBMI()">احسب الآن</button>
 
-      <div class="grid">
-        <!-- BMI -->
-        <article class="card">
-          <h3>حاسبة مؤشر كتلة الجسم (BMI)</h3>
-          <label>الطول (م)</label>
-          <input id="height" type="number" step="0.01" placeholder="مثال: 1.75" />
-          <label>الوزن (كجم)</label>
-          <input id="weight" type="number" step="0.1" placeholder="مثال: 72" />
-          <div class="row">
-            <button id="btnCalcBMI">احسب</button>
-            <button id="btnResetBMI" class="muted">تفريغ</button>
-          </div>
-          <div id="bmiResult" class="result small muted"></div>
-        </article>
-
-        <!-- Food search -->
-        <article class="card">
-          <h3>🔎 محرك البحث الغذائي (OpenFoodFacts)</h3>
-          <p class="muted small">اكتب اسمًا بالعربية أو الإنجليزية — مثال: تفاح، apple، بيض، egg</p>
-
-          <div class="search-box">
-            <input id="foodInput" type="search" placeholder="اكتب اسم الطعام..." autocomplete="off" />
-            <button id="btnSearch" title="بحث">بحث</button>
-          </div>
-
-          <div id="suggestions" class="suggestions hidden"></div>
-
-          <div id="foodResult" class="food-result"></div>
-        </article>
+      <p id="bmiResult"></p>
+      <div id="adviceSection" class="hidden">
+        <h3>نصائح مخصصة لك</h3>
+        <ul id="adviceList"></ul>
+        <h4>جدول منظمة الصحة العالمية</h4>
+        <div id="whoTable"></div>
       </div>
-
-      <footer class="muted small">
-        يستخدم OpenFoodFacts كمصدر رئيسي (بدون مفتاح). إذا لم توجد نتيجة، يستخدم بيانات محلية احتياطية.
-      </footer>
     </section>
 
-    <!-- Account modal -->
-    <div id="accountModal" class="modal hidden">
-      <div class="modal-card">
-        <h4>معلومات الحساب</h4>
-        <p><strong>المستخدم:</strong> <span id="accName"></span></p>
-        <p><strong>تاريخ الإنشاء:</strong> <span id="accCreated"></span></p>
-        <div class="row">
-          <button id="closeAcc" class="muted">إغلاق</button>
-          <button id="deleteAcc" class="danger">حذف الحساب</button>
-        </div>
-      </div>
-    </div>
-
+    <!-- محرك البحث الغذائي -->
+    <section id="foodSearch" class="section hidden">
+      <h2>محرك البحث الغذائي</h2>
+      <input type="text" id="foodInput" placeholder="اكتب اسم الطعام (مثلاً: بيض)">
+      <button onclick="searchFood()">ابحث</button>
+      <p id="searchLimit"></p>
+      <div id="foodResults"></div>
+    </section>
   </main>
+
+  <footer class="footer">
+    <p>© 2025 موقع أدهم الصحي — جميع الحقوق محفوظة</p>
+  </footer>
 
   <script src="script.js"></script>
 </body>
 </html>
-
-
