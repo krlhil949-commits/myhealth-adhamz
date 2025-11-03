@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>موقع أدهم الصحي — المحرك الغذائي الكبير</title>
+  <title>موقع أدهم الصحي — متكامل</title>
   <link rel="stylesheet" href="style.css"/>
   <!-- Fuse.js for fuzzy search -->
   <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
@@ -12,62 +12,102 @@
   <header class="header">
     <h1>موقع أدهم الصحي</h1>
     <nav>
-      <button onclick="showSection('bmi')">حاسبة الوزن</button>
+      <button onclick="showSection('bmi')">احسب معدل الوزن</button>
       <button onclick="showSection('foodSearch')">المحرك الغذائي</button>
       <button onclick="showSection('login')">تسجيل الدخول</button>
     </nav>
   </header>
 
   <main>
-    <!-- login (كما لديك) -->
+    <!-- تسجيل الدخول -->
     <section id="login" class="section hidden">
       <h2>تسجيل الدخول</h2>
-      <input id="username" placeholder="اسم المستخدم"/>
-      <input id="password" type="password" placeholder="كلمة المرور"/>
-      <button onclick="login()">تسجيل الدخول</button>
-      <p>ليس لديك حساب؟ <button onclick="register()">إنشاء حساب</button></p>
+      <input id="username" placeholder="اسم المستخدم" />
+      <input id="password" type="password" placeholder="كلمة المرور" />
+      <div style="margin-top:8px;">
+        <button onclick="login()">تسجيل الدخول</button>
+        <button onclick="register()">إنشاء حساب</button>
+      </div>
     </section>
 
-    <!-- BMI كما كان -->
+    <!-- حاسبة BMI (المزايا القديمة كاملة هنا) -->
     <section id="bmi" class="section hidden">
-      <h2>حاسبة كتلة الجسم</h2>
-      <input id="weight" placeholder="الوزن (كجم)"/>
-      <input id="height" placeholder="الطول (متر)"/>
-      <button onclick="calculateBMI()">احسب الآن</button>
-      <div id="bmiResult"></div>
+      <h2>احسب معدل وزنك</h2>
+
+      <div class="bmi-grid">
+        <div>
+          <label>الوزن الحالي (كجم)</label>
+          <input type="number" id="weight" placeholder="خانة: الوزن" />
+        </div>
+        <div>
+          <label>الطول (متر)</label>
+          <input type="number" id="height" placeholder="مثال: 1.75" step="0.01" />
+        </div>
+        <div>
+          <label>العمر (سنة)</label>
+          <input type="number" id="age" placeholder="مثال: 25" value="25" />
+        </div>
+        <div>
+          <label>النوع</label>
+          <select id="gender">
+            <option value="male">ذكر</option>
+            <option value="female">أنثى</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;">
+        <button onclick="calculateBMIFull()">احسب الآن</button>
+      </div>
+
+      <div id="bmiResult" class="resultBox"></div>
+
+      <div id="adviceSection" class="hidden resultBox">
+        <h3>نصائح مخصصة لك</h3>
+        <ul id="adviceList"></ul>
+      </div>
+
+      <div id="whoTable" class="resultBox"></div>
+
+      <div id="burnTable" class="resultBox"></div>
     </section>
 
-    <!-- المحرك الغذائي -->
+    <!-- المحرك الغذائي المتقدم -->
     <section id="foodSearch" class="section hidden">
       <h2>🔍 المحرك الغذائي الضخم</h2>
 
       <div class="controls">
-        <input id="foodInput" placeholder="ابحث عن طعام أو شراب (مثال: بيض، أرز، قهوة)"/>
+        <input id="foodInput" placeholder="ابحث عن طعام أو شراب (مثال: بيض، أرز، قهوة)" />
         <div id="unitContainer" class="unitContainer"></div>
-        <button onclick="performSearch()">بحث (محلي/ضبابي)</button>
-        <button onclick="searchOpenFoodFacts()">بحث (Open Food Facts API)</button>
-        <button onclick="showImportDialog()">استيراد JSON chunk</button>
-        <button onclick="clearDatabase()">مسح قاعدة البيانات</button>
       </div>
 
-      <div id="suggestions" class="suggestions"></div>
-      <div id="foodResult" class="foodResult"></div>
-
-      <hr/>
-      <div class="importArea hidden" id="importArea">
-        <h3>استيراد ملف JSON chunk</h3>
-        <p>اختر ملف JSON (مصفوفة عناصر غذائية) لتحميله إلى IndexedDB</p>
-        <input type="file" id="fileInput" accept=".json"/>
-        <button onclick="importFromFile()">تحميل الملف</button>
-        <button onclick="hideImportDialog()">إلغاء</button>
+      <div class="controls">
+        <button onclick="performSearch()">بحث محلي (فهرس)</button>
+        <button onclick="searchOpenFoodFacts()">بحث عبر الإنترنت (Open Food Facts)</button>
+        <button onclick="showImportDialog()">استيراد JSON chunk</button>
+        <button onclick="clearDatabase()">مسح قاعدة البيانات المحلية</button>
       </div>
 
       <div id="status" class="status"></div>
+      <div id="suggestions" class="suggestions"></div>
+      <div id="foodResult" class="foodResult"></div>
+
+      <hr />
+
+      <div class="importArea hidden" id="importArea">
+        <h3>استيراد ملف JSON chunk</h3>
+        <p>اختر ملف JSON (مصفوفة سجلات غذائية جاهزة) لتحميله إلى IndexedDB</p>
+        <input type="file" id="fileInput" accept=".json" />
+        <div style="margin-top:8px;">
+          <button onclick="importFromFile()">تحميل الملف</button>
+          <button onclick="hideImportDialog()">إلغاء</button>
+        </div>
+      </div>
     </section>
   </main>
 
-  <footer>
-    <p>© 2025 موقع أدهم الصحي</p>
+  <footer class="footer">
+    <p>© 2025 موقع أدهم الصحي — كل الحقوق محفوظة</p>
   </footer>
 
   <script src="script.js"></script>
