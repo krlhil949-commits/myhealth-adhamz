@@ -1,51 +1,73 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>موقع أدهم الصحي</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>موقع أدهم الصحي — المحرك الغذائي الكبير</title>
+  <link rel="stylesheet" href="style.css"/>
+  <!-- Fuse.js for fuzzy search -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2/dist/fuse.min.js"></script>
 </head>
 <body>
   <header class="header">
-    <h1>مرحباً بك في موقع أدهم الصحي</h1>
+    <h1>موقع أدهم الصحي</h1>
     <nav>
-      <button onclick="showSection('bmi')">احسب معدل الوزن</button>
+      <button onclick="showSection('bmi')">حاسبة الوزن</button>
+      <button onclick="showSection('foodSearch')">المحرك الغذائي</button>
       <button onclick="showSection('login')">تسجيل الدخول</button>
     </nav>
   </header>
 
   <main>
-    <!-- تسجيل الدخول -->
+    <!-- login (كما لديك) -->
     <section id="login" class="section hidden">
       <h2>تسجيل الدخول</h2>
-      <input type="text" id="username" placeholder="اسم المستخدم">
-      <input type="password" id="password" placeholder="كلمة المرور">
+      <input id="username" placeholder="اسم المستخدم"/>
+      <input id="password" type="password" placeholder="كلمة المرور"/>
       <button onclick="login()">تسجيل الدخول</button>
       <p>ليس لديك حساب؟ <button onclick="register()">إنشاء حساب</button></p>
     </section>
 
-    <!-- حاسبة BMI -->
+    <!-- BMI كما كان -->
     <section id="bmi" class="section hidden">
-      <h2>احسب معدل وزنك</h2>
-      <label>الوزن الحالي (كجم):</label>
-      <input type="number" id="weight" placeholder="مثال: 70">
-      <label>الطول (بالمتر):</label>
-      <input type="number" id="height" placeholder="مثال: 1.75" step="0.01">
+      <h2>حاسبة كتلة الجسم</h2>
+      <input id="weight" placeholder="الوزن (كجم)"/>
+      <input id="height" placeholder="الطول (متر)"/>
       <button onclick="calculateBMI()">احسب الآن</button>
+      <div id="bmiResult"></div>
+    </section>
 
-      <p id="bmiResult"></p>
-      <div id="adviceSection" class="hidden">
-        <h3>نصائح مخصصة لك</h3>
-        <ul id="adviceList"></ul>
-        <h4>جدول منظمة الصحة العالمية</h4>
-        <div id="whoTable"></div>
+    <!-- المحرك الغذائي -->
+    <section id="foodSearch" class="section hidden">
+      <h2>🔍 المحرك الغذائي الضخم</h2>
+
+      <div class="controls">
+        <input id="foodInput" placeholder="ابحث عن طعام أو شراب (مثال: بيض، أرز، قهوة)"/>
+        <div id="unitContainer" class="unitContainer"></div>
+        <button onclick="performSearch()">بحث (محلي/ضبابي)</button>
+        <button onclick="searchOpenFoodFacts()">بحث (Open Food Facts API)</button>
+        <button onclick="showImportDialog()">استيراد JSON chunk</button>
+        <button onclick="clearDatabase()">مسح قاعدة البيانات</button>
       </div>
+
+      <div id="suggestions" class="suggestions"></div>
+      <div id="foodResult" class="foodResult"></div>
+
+      <hr/>
+      <div class="importArea hidden" id="importArea">
+        <h3>استيراد ملف JSON chunk</h3>
+        <p>اختر ملف JSON (مصفوفة عناصر غذائية) لتحميله إلى IndexedDB</p>
+        <input type="file" id="fileInput" accept=".json"/>
+        <button onclick="importFromFile()">تحميل الملف</button>
+        <button onclick="hideImportDialog()">إلغاء</button>
+      </div>
+
+      <div id="status" class="status"></div>
     </section>
   </main>
 
-  <footer class="footer">
-    <p>© 2025 موقع أدهم الصحي — جميع الحقوق محفوظة</p>
+  <footer>
+    <p>© 2025 موقع أدهم الصحي</p>
   </footer>
 
   <script src="script.js"></script>
