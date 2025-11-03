@@ -11,7 +11,6 @@
     <h1>مرحباً بك في موقع أدهم الصحي</h1>
     <nav>
       <button onclick="showSection('bmi')">احسب معدل الوزن</button>
-      <button onclick="showSection('foodSearch')">محرك البحث الغذائي</button>
       <button onclick="showSection('login')">تسجيل الدخول</button>
     </nav>
   </header>
@@ -42,15 +41,6 @@
         <h4>جدول منظمة الصحة العالمية</h4>
         <div id="whoTable"></div>
       </div>
-    </section>
-
-    <!-- محرك البحث الغذائي -->
-    <section id="foodSearch" class="section hidden">
-      <h2>محرك البحث الغذائي</h2>
-      <input type="text" id="foodInput" placeholder="اكتب اسم الطعام (مثلاً: بيض)">
-      <button onclick="searchFood()">ابحث</button>
-      <p id="searchLimit"></p>
-      <div id="foodResults"></div>
     </section>
   </main>
 
