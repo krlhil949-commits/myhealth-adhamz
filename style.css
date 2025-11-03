@@ -1,12 +1,103 @@
-body{font-family: "Tajawal",sans-serif;background:linear-gradient(135deg,#021a32,#064663);color:#fff;margin:0;padding:0;text-align:center}
-.header{background:#032030;padding:18px}
-nav button{background:#00bfa6;border:none;color:#fff;padding:8px 12px;margin:4px;border-radius:8px;cursor:pointer}
-.section{display:none;padding:20px}
-.section:not(.hidden){display:block}
-input{padding:8px;margin:6px;border-radius:6px;border:none;width:220px;text-align:center}
-.unitContainer{margin:6px}
-.foodResult{margin-top:14px;background:rgba(255,255,255,0.06);padding:12px;border-radius:10px;color:#fff; text-align:right}
-.suggestions{margin-top:10px;color:#ffd; text-align:center}
-.importArea{margin-top:10px;background:rgba(255,255,255,0.04);padding:10px;border-radius:8px}
-.status{margin-top:10px;color:#ffe}
-.hidden{display:none}
+/* عام */
+body {
+  font-family: "Cairo", sans-serif;
+  background: linear-gradient(135deg, #0e2a47, #1e5fa1);
+  color: #fff;
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  direction: rtl;
+}
+
+.header {
+  background-color: #144a7a;
+  padding: 18px;
+  border-bottom: 2px solid #0e2a47;
+}
+
+.header h1 { margin: 0 0 8px 0; font-size: 1.6em; }
+
+nav button {
+  margin: 4px;
+  padding: 8px 14px;
+  background-color: #1e5fa1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+/* الأقسام */
+.section {
+  display: none;
+  padding: 18px;
+}
+
+.section:not(.hidden) {
+  display: block;
+  max-width: 980px;
+  margin: 12px auto;
+}
+
+/* عناصر إدخال */
+input, select {
+  padding: 8px;
+  margin: 6px;
+  border-radius: 8px;
+  border: none;
+  font-size: 1em;
+  width: 200px;
+  text-align: center;
+}
+
+/* بعض الصناديق للنتائج */
+.resultBox {
+  background: rgba(255,255,255,0.06);
+  margin-top: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: right;
+}
+
+/* grid لحقول BMI */
+.bmi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  justify-items: center;
+}
+
+/* المحرك الغذائي */
+.controls { margin-top: 8px; }
+.unitContainer { margin-top: 6px; }
+.foodResult {
+  margin-top: 12px;
+  background: rgba(255,255,255,0.06);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: right;
+}
+
+/* اقتراحات */
+.suggestions { margin-top: 10px; }
+
+/* استيراد */
+.importArea {
+  margin-top: 10px;
+  background: rgba(255,255,255,0.04);
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* الحالة */
+.status { margin-top: 8px; color: #ffd; }
+
+/* أزرار */
+button { cursor: pointer; border: none; border-radius: 8px; padding: 8px 12px; background: #00bfa6; color: white; margin: 4px; }
+button:hover { transform: translateY(-2px); transition: 0.15s; }
+
+/* استجابة */
+@media (max-width: 600px) {
+  input, select { width: 90%; }
+  .section { padding: 12px; }
+}
